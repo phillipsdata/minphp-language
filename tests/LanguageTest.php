@@ -16,7 +16,7 @@ class LanguageTest extends PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->lang_path = dirname(__FILE__) . DIRECTORY_SEPARATOR . "fixtures" . DIRECTORY_SEPARATOR;
+        $this->lang_path = dirname(__FILE__) . DIRECTORY_SEPARATOR . "Fixtures" . DIRECTORY_SEPARATOR;
     }
 
     /**
