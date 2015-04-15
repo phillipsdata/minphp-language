@@ -40,14 +40,22 @@ class Language
     protected static $allow_passthrough = false;
     
     /**
-     * Set options
+     * Set default language
      *
      * @param string $default_language
-     * @param boolean $allow_passthrough
      */
-    public static function setOptions($default_language, $allow_passthrough)
+    public static function setDefaultLanguage($default_language)
     {
         self::$default_language = $default_language;
+    }
+    
+    /**
+     * Allow language terms to be returned if no definition found
+     *
+     * @param boolean $allow_passthrough
+     */
+    public static function allowPassthrough($allow_passthrough)
+    {
         self::$allow_passthrough = $allow_passthrough;
     }
     
@@ -98,8 +106,7 @@ class Language
         $argc = func_num_args();
         if ($argc > 2) {
             $args = array_slice(func_get_args(), 2, $argc-1);
-            // If printf args are passed as an array use those instead.  This
-            // is the case, by default, if Language::_() was used.
+            // If printf args are passed as an array use those instead.
             if (is_array($args[0])) {
                 $args = $args[0];
             }
