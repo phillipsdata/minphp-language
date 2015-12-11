@@ -1,10 +1,11 @@
 <?php
-namespace minphp\Language;
+namespace Minphp\Language\Tests;
 
-use \PHPUnit_Framework_TestCase;
+use PHPUnit_Framework_TestCase;
+use Minphp\Language\Language;
 
 /**
- * @coversDefaultClass \minphp\Language\Language
+ * @coversDefaultClass \Minphp\Language\Language
  */
 class LanguageTest extends PHPUnit_Framework_TestCase
 {
@@ -28,7 +29,7 @@ class LanguageTest extends PHPUnit_Framework_TestCase
     {
         Language::setLang("en_us");
         Language::loadLang("language_test", "en_us", $this->lang_path);
-        
+
         $this->assertEquals("The blue car is fast.", Language::_("LanguageTest.b", true, "blue", "fast", "car"));
     }
 
@@ -41,7 +42,7 @@ class LanguageTest extends PHPUnit_Framework_TestCase
     {
         Language::setLang("en_us");
         Language::loadLang("language_test", "en_uk", $this->lang_path);
-        
+
         $this->assertEquals(
             "The blue car is fast.",
             Language::getText("LanguageTest.b", true, "blue", "fast", "car")
@@ -50,15 +51,15 @@ class LanguageTest extends PHPUnit_Framework_TestCase
             "The blue car is fast.",
             Language::getText("LanguageTest.b", true, array("blue", "fast", "car"))
         );
-        
+
         $this->assertEquals("I like the color green.", Language::getText("LanguageTest.a", true));
-        
+
         Language::setLang("en_uk");
         $this->assertEquals("The blue car is fast.", Language::getText("LanguageTest.b", true, "blue", "fast", "car"));
-        
+
         Language::allowPassthrough(true);
         $this->assertEquals("Non-existent", Language::getText("Non-existent", true));
-        
+
         $this->expectOutputString("I like the colour green.");
         Language::getText("LanguageTest.a");
     }
@@ -72,10 +73,10 @@ class LanguageTest extends PHPUnit_Framework_TestCase
         Language::setDefaultLanguage("en_uk");
         Language::loadLang("language_test", null, $this->lang_path);
         Language::loadLang(array("language_test", "language_not_exists"), null, $this->lang_path);
-        
+
         Language::setLang("en_us");
         $this->assertEquals("I like the color green.", Language::getText("LanguageTest.a", true));
-        
+
         Language::setLang("en_uk");
         $this->assertEquals("I like the colour green.", Language::getText("LanguageTest.a", true));
     }
@@ -88,6 +89,6 @@ class LanguageTest extends PHPUnit_Framework_TestCase
         Language::setLang(null);
         $this->assertNull(Language::setLang("en_uk"));
         $this->assertEquals("en_uk", Language::setLang("en_us"));
-        
+
     }
 }
