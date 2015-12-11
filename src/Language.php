@@ -1,5 +1,5 @@
 <?php
-namespace minphp\Language;
+namespace Minphp\Language;
 
 if (!defined("LANGDIR")) {
     define("LANGDIR", ".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "language" . DIRECTORY_SEPARATOR);
@@ -73,7 +73,7 @@ class Language
     {
         // @codingStandardsIgnoreEnd
         $args = func_get_args();
-        return call_user_func_array(array("\minphp\Language\Language", "getText"), $args);
+        return call_user_func_array(array("\Minphp\Language\Language", "getText"), $args);
     }
     
     /**
