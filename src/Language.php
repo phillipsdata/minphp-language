@@ -1,9 +1,6 @@
 <?php
 namespace Minphp\Language;
 
-if (!defined("LANGDIR")) {
-    define("LANGDIR", ".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "language" . DIRECTORY_SEPARATOR);
-}
 /**
  * Provides a set of static methods to aid in the use of multi-language support.
  * Supports the use of multiple simultaneous languages, including a default
@@ -38,7 +35,11 @@ class Language
      * @var boolean True to allow language keys to be displayed if no match found
      */
     protected static $allow_passthrough = false;
-    
+    /**
+     * @var string The path to the default language directory
+     */
+    protected static $default_dir = null;
+
     /**
      * Set default language
      *
@@ -48,7 +49,17 @@ class Language
     {
         self::$default_language = $default_language;
     }
-    
+
+    /**
+     * Set the default language directory
+     *
+     * @param string $dir
+     */
+    public static function setDefaultDir($dir)
+    {
+        self::$default_dir = $dir;
+    }
+
     /**
      * Allow language terms to be returned if no definition found
      *
@@ -58,7 +69,7 @@ class Language
     {
         self::$allow_passthrough = $allow_passthrough;
     }
-    
+
     /**
      * Alias of Language::getText()
      * @see Language::getText()
@@ -75,7 +86,7 @@ class Language
         $args = func_get_args();
         return call_user_func_array(array("\Minphp\Language\Language", "getText"), $args);
     }
-    
+
     /**
      * Fetches text from the loaded language file.  Will search the preferred
      * language file first, if not found in there, then will search the default
@@ -88,10 +99,12 @@ class Language
      */
     public static function getText($lang_key, $return = false)
     {
-        $language = self::$current_language != null ? self::$current_language : self::$default_language;
-        
+        $language = self::$current_language != null
+            ? self::$current_language
+            : self::$default_language;
+
         $output = "";
-        
+
         // If the text defined exists, use it
         if (isset(self::$lang_text[$language][$lang_key])) {
             $output = self::$lang_text[$language][$lang_key];
@@ -102,7 +115,7 @@ class Language
         } elseif (self::$allow_passthrough) {
             $output = $lang_key;
         }
-        
+
         $argc = func_num_args();
         if ($argc > 2) {
             $args = array_slice(func_get_args(), 2, $argc-1);
@@ -111,16 +124,16 @@ class Language
                 $args = $args[0];
             }
             array_unshift($args, $output);
-    
+
             $output = call_user_func_array("sprintf", $args);
         }
-        
+
         if ($return) {
             return $output;
         }
         echo $output;
     }
-    
+
     /**
      * Loads a language file whose properties may then be invoked.
      *
@@ -128,14 +141,18 @@ class Language
      * @param string $language The ISO 639-1/2 language to load the $lang_file
      *  for (e.g. en_us), default is "Language.default" config value
      * @param string $lang_dir The directory from which to load the given
-     *  language file(s), defaults to LANGDIR
+     *  language file(s), defaults to default directory
      */
-    public static function loadLang($lang_file, $language = null, $lang_dir = LANGDIR)
+    public static function loadLang($lang_file, $language = null, $lang_dir = null)
     {
-        if ($language == null) {
+        if ($language === null) {
             $language = self::$current_language;
         }
-            
+
+        if ($lang_dir === null) {
+            $lang_dir = self::$default_dir;
+        }
+
         if (is_array($lang_file)) {
             $num_lang_files = count($lang_file);
             for ($i=0; $i<$num_lang_files; $i++) {
@@ -143,16 +160,16 @@ class Language
             }
             return;
         }
-        
+
         // Check if the language file in this language has already been loaded
         if (isset(self::$lang_files[$lang_dir . $lang_file])
             && in_array($language, self::$lang_files[$lang_dir . $lang_file])
         ) {
             return;
         }
-        
+
         $load_success = true;
-        
+
         // Fetch $lang from the language file, if it exists
         if (file_exists($lang_dir . $language . DIRECTORY_SEPARATOR . $lang_file)) {
             include_once $lang_dir . $language . DIRECTORY_SEPARATOR . $lang_file;
@@ -161,20 +178,20 @@ class Language
         } else {
             $load_success = false;
         }
-            
+
         if ($load_success) {
             self::$lang_files[$lang_dir . $lang_file][] = $language;
-        
+
             if (isset($lang) && is_array($lang)) {
                 if (!isset(self::$lang_text[$language])) {
                     self::$lang_text[$language] = array();
                 }
-                
+
                 // Set the text for this language
                 foreach ($lang as $key => $text) {
                     self::$lang_text[$language][$key] = $text;
                 }
-                
+
                 // Load the text for the default language as well so we have that to fall back on
                 if ($language != self::$default_language) {
                     self::loadLang($lang_file, self::$default_language, $lang_dir);
@@ -184,12 +201,12 @@ class Language
             // been loaded into the appropriate class variable
             unset($lang);
         } elseif ($language != self::$default_language) {
-            // If the language just attemped did not load and this is the was not the
+            // If the language just attemped did not load and this was not the
             // default language, then attempt to load the default language
             self::loadLang($lang_file, self::$default_language, $lang_dir);
         }
     }
-    
+
     /**
      * Sets the language to load when not explicitly defined in the requested method
      *
@@ -200,9 +217,9 @@ class Language
     public static function setLang($language)
     {
         $prev_lang = self::$current_language;
-        
+
         self::$current_language = $language;
-        
+
         return $prev_lang;
     }
 }
