@@ -8,9 +8,6 @@ namespace Minphp\Language;
  * primary keys, the default is used instead.
  *
  * This class makes use of the following Configure class options:
- *
- * Language.default - Defines the default (fallback) language (ISO 639-1/2) e.g. "en_us"
- * Language.allow_pass_through - true/false allows keys without a definition to be passed through
  */
 class Language
 {
@@ -138,8 +135,7 @@ class Language
      * Loads a language file whose properties may then be invoked.
      *
      * @param mixed $lang_file A string as a single language file or array containing a list of language files to load
-     * @param string $language The ISO 639-1/2 language to load the $lang_file
-     *  for (e.g. en_us), default is "Language.default" config value
+     * @param string $language The ISO 639-1/2 language to load the $lang_file for (e.g. en_us)
      * @param string $lang_dir The directory from which to load the given
      *  language file(s), defaults to default directory
      */
