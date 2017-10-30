@@ -27,7 +27,7 @@ class Language
     /**
      * @var string The default language (ISO 639-1/2)
      */
-    protected static $default_language = "en_us";
+    protected static $default_language = 'en_us';
     /**
      * @var boolean True to allow language keys to be displayed if no match found
      */
@@ -81,7 +81,7 @@ class Language
     {
         // @codingStandardsIgnoreEnd
         $args = func_get_args();
-        return call_user_func_array(array("\Minphp\Language\Language", "getText"), $args);
+        return call_user_func_array(array('\Minphp\Language\Language', 'getText'), $args);
     }
 
     /**
@@ -100,7 +100,7 @@ class Language
             ? self::$current_language
             : self::$default_language;
 
-        $output = "";
+        $output = '';
 
         // If the text defined exists, use it
         if (isset(self::$lang_text[$language][$lang_key])) {
@@ -115,14 +115,14 @@ class Language
 
         $argc = func_num_args();
         if ($argc > 2) {
-            $args = array_slice(func_get_args(), 2, $argc-1);
+            $args = array_slice(func_get_args(), 2, $argc - 1);
             // If printf args are passed as an array use those instead.
             if (is_array($args[0])) {
                 $args = $args[0];
             }
             array_unshift($args, $output);
 
-            $output = call_user_func_array("sprintf", $args);
+            $output = call_user_func_array('sprintf', $args);
         }
 
         if ($return) {
@@ -151,7 +151,7 @@ class Language
 
         if (is_array($lang_file)) {
             $num_lang_files = count($lang_file);
-            for ($i=0; $i<$num_lang_files; $i++) {
+            for ($i = 0; $i < $num_lang_files; $i++) {
                 self::loadLang($lang_file[$i], $language, $lang_dir);
             }
             return;
@@ -169,8 +169,8 @@ class Language
         // Fetch $lang from the language file, if it exists
         if (file_exists($lang_dir . $language . DIRECTORY_SEPARATOR . $lang_file)) {
             include_once $lang_dir . $language . DIRECTORY_SEPARATOR . $lang_file;
-        } elseif (file_exists($lang_dir . $language . DIRECTORY_SEPARATOR . $lang_file . ".php")) {
-            include_once $lang_dir . $language . DIRECTORY_SEPARATOR . $lang_file . ".php";
+        } elseif (file_exists($lang_dir . $language . DIRECTORY_SEPARATOR . $lang_file . '.php')) {
+            include_once $lang_dir . $language . DIRECTORY_SEPARATOR . $lang_file . '.php';
         } else {
             $load_success = false;
         }
