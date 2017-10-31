@@ -17,7 +17,7 @@ class LanguageTest extends PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->lang_path = dirname(__FILE__) . DIRECTORY_SEPARATOR . "Fixtures" . DIRECTORY_SEPARATOR;
+        $this->lang_path = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'Fixtures' . DIRECTORY_SEPARATOR;
     }
 
     /**
@@ -27,10 +27,10 @@ class LanguageTest extends PHPUnit_Framework_TestCase
      */
     public function testShortGetText()
     {
-        Language::setLang("en_us");
-        Language::loadLang("language_test", "en_us", $this->lang_path);
+        Language::setLang('en_us');
+        Language::loadLang('language_test', 'en_us', $this->lang_path);
 
-        $this->assertEquals("The blue car is fast.", Language::_("LanguageTest.b", true, "blue", "fast", "car"));
+        $this->assertEquals('The blue car is fast.', Language::_('LanguageTest.b', true, 'blue', 'fast', 'car'));
     }
 
     /**
@@ -40,28 +40,28 @@ class LanguageTest extends PHPUnit_Framework_TestCase
      */
     public function testGetText()
     {
-        Language::setLang("en_us");
-        Language::loadLang("language_test", "en_uk", $this->lang_path);
+        Language::setLang('en_us');
+        Language::loadLang('language_test', 'en_uk', $this->lang_path);
 
         $this->assertEquals(
-            "The blue car is fast.",
-            Language::getText("LanguageTest.b", true, "blue", "fast", "car")
+            'The blue car is fast.',
+            Language::getText('LanguageTest.b', true, 'blue', 'fast', 'car')
         );
         $this->assertEquals(
-            "The blue car is fast.",
-            Language::getText("LanguageTest.b", true, array("blue", "fast", "car"))
+            'The blue car is fast.',
+            Language::getText('LanguageTest.b', true, array('blue', 'fast', 'car'))
         );
 
-        $this->assertEquals("I like the color green.", Language::getText("LanguageTest.a", true));
+        $this->assertEquals('I like the color green.', Language::getText('LanguageTest.a', true));
 
-        Language::setLang("en_uk");
-        $this->assertEquals("The blue car is fast.", Language::getText("LanguageTest.b", true, "blue", "fast", "car"));
+        Language::setLang('en_uk');
+        $this->assertEquals('The blue car is fast.', Language::getText('LanguageTest.b', true, 'blue', 'fast', 'car'));
 
         Language::allowPassthrough(true);
-        $this->assertEquals("Non-existent", Language::getText("Non-existent", true));
+        $this->assertEquals('Non-existent', Language::getText('Non-existent', true));
 
-        $this->expectOutputString("I like the colour green.");
-        Language::getText("LanguageTest.a");
+        $this->expectOutputString('I like the colour green.');
+        Language::getText('LanguageTest.a');
     }
 
     /**
@@ -70,15 +70,15 @@ class LanguageTest extends PHPUnit_Framework_TestCase
      */
     public function testLoadLang()
     {
-        Language::setDefaultLanguage("en_uk");
-        Language::loadLang("language_test", null, $this->lang_path);
-        Language::loadLang(array("language_test", "language_not_exists"), null, $this->lang_path);
+        Language::setDefaultLanguage('en_uk');
+        Language::loadLang('language_test', null, $this->lang_path);
+        Language::loadLang(array('language_test', 'language_not_exists'), null, $this->lang_path);
 
-        Language::setLang("en_us");
-        $this->assertEquals("I like the color green.", Language::getText("LanguageTest.a", true));
+        Language::setLang('en_us');
+        $this->assertEquals('I like the color green.', Language::getText('LanguageTest.a', true));
 
-        Language::setLang("en_uk");
-        $this->assertEquals("I like the colour green.", Language::getText("LanguageTest.a", true));
+        Language::setLang('en_uk');
+        $this->assertEquals('I like the colour green.', Language::getText('LanguageTest.a', true));
     }
 
     /**
@@ -87,8 +87,7 @@ class LanguageTest extends PHPUnit_Framework_TestCase
     public function testSetLang()
     {
         Language::setLang(null);
-        $this->assertNull(Language::setLang("en_uk"));
-        $this->assertEquals("en_uk", Language::setLang("en_us"));
-
+        $this->assertNull(Language::setLang('en_uk'));
+        $this->assertEquals('en_uk', Language::setLang('en_us'));
     }
 }
