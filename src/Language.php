@@ -122,7 +122,18 @@ class Language
             }
             array_unshift($args, $output);
 
-            $output = call_user_func_array('sprintf', $args);
+            try {
+                $output = call_user_func_array('sprintf', $args);
+            } catch (\ArgumentCountError $e) {
+                preg_match('/(%(?:\d\$)?[bcdeEufFgGosxX])/', $output, $matches);
+                $required_args = count($matches ?? []) + 1;
+
+                if ($required_args > count($args)) {
+                    for ($i = count($args); $i < $required_args; $i++) {
+                        $args[] = '';
+                    }
+                }
+            }
         }
 
         if ($return) {
