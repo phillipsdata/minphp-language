@@ -125,14 +125,7 @@ class Language
             try {
                 $output = call_user_func_array('sprintf', $args);
             } catch (\ArgumentCountError $e) {
-                preg_match('/(%(?:\d\$)?[bcdeEufFgGosxX])/', $output, $matches);
-                $required_args = count(isset($matches) ? $matches : array()) + 1;
-
-                if ($required_args > count($args)) {
-                    for ($i = count($args); $i < $required_args; $i++) {
-                        $args[] = '';
-                    }
-                }
+                // Nothing to do
             }
         }
 
