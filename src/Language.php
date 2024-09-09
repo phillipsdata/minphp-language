@@ -17,6 +17,10 @@ class Language
      */
     protected static $lang_files;
     /**
+     * @var array The override text for the given language
+     */
+    protected static $override_text;
+    /**
      * @var array The text for the given language
      */
     protected static $lang_text;
@@ -103,7 +107,9 @@ class Language
         $output = '';
 
         // If the text defined exists, use it
-        if (isset(self::$lang_text[$language][$lang_key])) {
+        if (isset(self::$override_text[$language][$lang_key])) {
+            $output = self::$override_text[$language][$lang_key];
+        } elseif (isset(self::$lang_text[$language][$lang_key])) {
             $output = self::$lang_text[$language][$lang_key];
         } elseif (isset(self::$lang_text[self::$default_language][$lang_key])) {
             // If the text defined did not exist in the set language, look for it
@@ -132,6 +138,19 @@ class Language
     }
 
     /**
+     * Loads a language file and overrides all existing definitions.
+     *
+     * @param mixed $lang_file A string as a single language file or array containing a list of language files to load
+     * @param string $language The ISO 639-1/2 language to load the $lang_file for (e.g. en_us)
+     * @param string $lang_dir The directory from which to load the given
+     *  language file(s), defaults to default directory
+     */
+    public static function loadOverride($lang_file, $language = null, $lang_dir = null)
+    {
+        self::loadLang($lang_file, $language, $lang_dir, true);
+    }
+
+    /**
      * Loads a language file whose properties may then be invoked.
      *
      * @param mixed $lang_file A string as a single language file or array containing a list of language files to load
@@ -139,7 +158,7 @@ class Language
      * @param string $lang_dir The directory from which to load the given
      *  language file(s), defaults to default directory
      */
-    public static function loadLang($lang_file, $language = null, $lang_dir = null)
+    public static function loadLang($lang_file, $language = null, $lang_dir = null, $override = false)
     {
         if ($language === null) {
             $language = self::$current_language;
@@ -152,7 +171,7 @@ class Language
         if (is_array($lang_file)) {
             $num_lang_files = count($lang_file);
             for ($i = 0; $i < $num_lang_files; $i++) {
-                self::loadLang($lang_file[$i], $language, $lang_dir);
+                self::loadLang($lang_file[$i], $language, $lang_dir, $override);
             }
             return;
         }
@@ -160,6 +179,7 @@ class Language
         // Check if the language file in this language has already been loaded
         if (isset(self::$lang_files[$lang_dir . $lang_file])
             && in_array($language, self::$lang_files[$lang_dir . $lang_file])
+            && !$override
         ) {
             return;
         }
@@ -176,21 +196,31 @@ class Language
         }
 
         if ($load_success) {
-            self::$lang_files[$lang_dir . $lang_file][] = $language;
+            if (!$override) {
+                self::$lang_files[$lang_dir . $lang_file][] = $language;
+            }
 
             if (isset($lang) && is_array($lang)) {
                 if (!isset(self::$lang_text[$language])) {
-                    self::$lang_text[$language] = array();
+                    if ($override) {
+                        self::$override_text[$language] = array();
+                    } else {
+                        self::$lang_text[$language] = array();
+                    }
                 }
 
                 // Set the text for this language
                 foreach ($lang as $key => $text) {
-                    self::$lang_text[$language][$key] = $text;
+                    if ($override) {
+                        self::$override_text[$language][$key] = $text;
+                    } else {
+                        self::$lang_text[$language][$key] = $text;
+                    }
                 }
 
                 // Load the text for the default language as well so we have that to fall back on
                 if ($language != self::$default_language) {
-                    self::loadLang($lang_file, self::$default_language, $lang_dir);
+                    self::loadLang($lang_file, self::$default_language, $lang_dir, $override);
                 }
             }
             // free up memory occupied by the $lang array, since it has already
@@ -199,7 +229,7 @@ class Language
         } elseif ($language != self::$default_language) {
             // If the language just attemped did not load and this was not the
             // default language, then attempt to load the default language
-            self::loadLang($lang_file, self::$default_language, $lang_dir);
+            self::loadLang($lang_file, self::$default_language, $lang_dir, $override);
         }
     }
 
